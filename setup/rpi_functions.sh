@@ -139,6 +139,10 @@ function rpi_install_login_notifications() {
     https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/motd/20-status \
     && sudo chmod +x /etc/update-motd.d/20-status
 
+  sudo curl --location --silent --output /usr/local/bin/status \
+    https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/status.sh \
+    && sudo chmod +x /usr/local/bin/status
+
   sudo curl --location --silent --output /etc/update-motd.d/90-updates-available \
     https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/motd/90-updates-available \
     && sudo chmod +x /etc/update-motd.d/90-updates-available
