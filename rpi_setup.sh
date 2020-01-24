@@ -11,9 +11,20 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-
 LOCALE="en_US.UTF-8"
 TMZ="America/Vancouver"
+
+# Configure Pi
+cd ~
+
+echo "Change pi default password..."
+sudo passwd
+
+
+cd ~
+
+echo "Change pi default password..."
+sudo passwd
 
 read -p "Enter new Hostname: " HOSTNAME
 # bail out if blank
@@ -23,8 +34,12 @@ read -p "Enter username to replace 'pi': " NEWUSER
 # bail out if blank
 [ -z $NEWUSER ] && echo "Aborting because no name provided" && exit 1
 
-# Configure Pi
-cd ~
+curl -sSL https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/rpi_functions.sh | source
 
-echo "Change pi default password..."
-sudo passwd
+## Add new user and lock Pi User
+rpi_clone_user ${NEWUSER}
+rpi_updates
+rpi_set_timezone "America/Vancouver"
+rpi_set_keyboard "us"
+rpi_change_hostname "${HOSTNAME}"
+rpi_set_locale

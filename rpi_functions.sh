@@ -22,7 +22,7 @@ function rpi_clone_user() {
   fi
 }
 
-functin rpi_updates() {
+function rpi_updates() {
   ## Install Updates
   echo "Installing Updates..."
   sudo apt-get update && sudo apt-get dist-upgrade -y
