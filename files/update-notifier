@@ -1,0 +1,8 @@
+#!/bin/sh
+UPDATE_FILE="/var/local/updates-available"
+sudo apt-get update >/dev/null 2>&1
+echo | sudo tee "${UPDATE_FILE}" >/dev/null 2>&1
+#echo "$(sudo apt-get upgrade -u -s | grep -P "^Inst" | wc -l) Packages can be updated." | sudo tee --append  "${UPDATE_FILE}" >/dev/null 2>&1
+echo "$(sudo apt-get -u -s dist-upgrade | grep -P "^Inst" | wc -l) Packages can be updated." | sudo tee --append  "${UPDATE_FILE}" >/dev/null 2>&1
+echo "$(sudo apt-get -u -s dist-upgrade | grep -P "^Inst" | grep -i securi | wc -l) updates are security updates." | sudo tee --append "${UPDATE_FILE}" >/dev/null 2>&1
+echo | sudo tee --append "${UPDATE_FILE}" >/dev/null 2>&1

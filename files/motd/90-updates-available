@@ -1,0 +1,5 @@
+#!/bin/sh
+
+stamp="/var/local/updates-available"
+
+[ ! -r "$stamp" ] || cat "$stamp"
