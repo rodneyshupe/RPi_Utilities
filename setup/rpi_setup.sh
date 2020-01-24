@@ -20,12 +20,6 @@ cd ~
 echo "Change pi default password..."
 sudo passwd
 
-
-cd ~
-
-echo "Change pi default password..."
-sudo passwd
-
 read -p "Enter new Hostname: " HOSTNAME
 # bail out if blank
 [ -z $HOSTNAME ] && echo "Aborting because no hostname provided" && exit 1
