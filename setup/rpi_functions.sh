@@ -30,11 +30,16 @@ function rpi_updates() {
 
 
 function rpi_set_timezone() {
-  local TMZ=${1:-America/Vancouver}
+  local TIMEZONE="${1:-America/Vancouver}"
+
+  if [ ! -f "/usr/share/zoneinfo/$TIMEZONE" ]; then
+    return 1;
+  fi
 
   # Set timezone to America/New_York
-  sudo cp /etc/timezone /etc/timezone.dist
-  echo "${TMZ}" > /etc/timezone
+  rm /etc/localtime
+  #sudo cp /etc/timezone /etc/timezone.dist
+  echo "${TIMEZONE}" > /etc/timezone
   sudo dpkg-reconfigure -f noninteractive tzdata
 }
 
@@ -48,22 +53,45 @@ function rpi_set_keyboard() {
 }
 
 function rpi_change_hostname() {
-  local HOSTNAME=${1}
+  local NEW_HOSTNAME=${1}
 
-  if [[ ! "$NEWUSER" ]]; then
-    echo "ERROR: rpi_clone_user: New username missing."
+  if [[ ! "$NEW_HOSTNAME" ]]; then
+    echo "ERROR: rpi_change_hostname: New Hostname missing."
   else
     ## Change Host name
-    sudo raspi-config nonint do_hostname ${HOSTNAME}
+    CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
+    echo $NEW_HOSTNAME > /etc/hostname
+    sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
   fi
 }
 
 function rpi_set_locale() {
-  local LOCALE=${1:-en_US.UTF-8}
+  local LOCALE="${1:-en_US.UTF-8}"
 
   ## Change locale
-  sudo cp /etc/locale.gen /etc/locale.gen.dist
-  sudo sed -i -e "s/^en_GB.UTF-8/\# en_GB.UTF-8/g" /etc/locale.gen
-  sudo sed -i -e "s/^\# ${LOCALE}/${LOCALE}/g" /etc/locale.gen
-  sudo locale-gen "${LOCALE}"
+  #sudo cp /etc/locale.gen /etc/locale.gen.dist
+  #sudo sed -i -e "s/^en_GB.UTF-8/\# en_GB.UTF-8/g" /etc/locale.gen
+  #sudo sed -i -e "s/^\# ${LOCALE}/${LOCALE}/g" /etc/locale.gen
+  #sudo locale-gen "${LOCALE}"
+
+  if ! LOCALE_LINE="$(grep "^$LOCALE " /usr/share/i18n/SUPPORTED)"; then
+    return 1
+  fi
+  local ENCODING="$(echo $LOCALE_LINE | cut -f2 -d " ")"
+  echo "$LOCALE $ENCODING" > /etc/locale.gen
+  sed -i "s/^\s*LANG=\S*/LANG=$LOCALE/" /etc/default/locale
+  dpkg-reconfigure -f noninteractive locales
+
+}
+
+function rpi_set_autologin() {
+  local USER="${1:-pi}"
+
+  systemctl set-default multi-user.target
+  ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
+  cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin $USER --noclear %I \$TERM
+EOF
 }
