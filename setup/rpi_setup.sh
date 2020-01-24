@@ -18,7 +18,7 @@ fi
 cd ~
 
 echo "Change pi default password..."
-sudo passwd
+sudo passwd pi
 
 read -p "Enter new Hostname: " HOSTNAME
 # bail out if blank
