@@ -28,7 +28,7 @@ read -p "Enter username to replace 'pi': " NEWUSER
 # bail out if blank
 [ -z $NEWUSER ] && echo "Aborting because no name provided" && exit 1
 
-wget https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/setup/rpi_functions.sh && source rpi_functions.sh
+wget --output-document=rpi_functions.sh --quiet https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/setup/rpi_functions.sh && source rpi_functions.sh
 
 ## Add new user and lock Pi User
 rpi_clone_user ${NEWUSER}
