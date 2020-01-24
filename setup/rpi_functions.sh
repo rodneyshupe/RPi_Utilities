@@ -109,12 +109,12 @@ function rpi_install_essentials() {
 
 function rpi_install_powerline_prompt() {
   echo "Installing Powerline Prompt..."
-  sudo apt-get --yes --quiet install fonts-powerline
+  sudo apt-get --yes --quiet  --quiet install fonts-powerline
   mkdir -p ~/.config/fontconfig/
   curl --location --silent --output ~/.config/fontconfig/conf.d https://raw.githubusercontent.com/powerline/fonts/master/fontconfig/50-enable-terminess-powerline.conf
-  fc-cache -vf
+  fc-cache -vf > /dev/null
 
-  sudo apt-get install python3-pip
+  sudo apt-get --yes --quiet --quiet install python3-pip
   sudo pip3 install powerline-shell
 
   mkdir -p ~/.config/powerline-shell
@@ -127,6 +127,7 @@ function rpi_install_powerline_prompt() {
     https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/powerlineshell/bashrc_insert.sh \
     >> ~/.bashrc
 
+  source ~/.bashrc
 }
 
 function rpi_install_login_notifications() {
