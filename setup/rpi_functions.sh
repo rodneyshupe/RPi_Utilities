@@ -24,6 +24,8 @@ function rpi_clone_user() {
 
 function rpi_updates() {
   ## Install Updates
+  #echo "Perform firmware update..."
+  #sudo rpi-update
   echo "Installing Updates..."
   sudo apt-get update > /dev/null && sudo apt-get dist-upgrade -y > /dev/null
 }
