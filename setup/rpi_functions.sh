@@ -131,6 +131,8 @@ function rpi_install_powerline_prompt() {
 }
 
 function rpi_install_login_notifications() {
+  echo "Installing Login Notifications..."
+
   sudo curl --location --silent --output /etc/update-motd.d/15-logo \
     https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/motd/15-logo \
     && sudo chmod +x /etc/update-motd.d/15-logo
