@@ -20,9 +20,16 @@ cd ~
 echo "Change pi default password..."
 sudo passwd pi
 
-read -p "Enter new Hostname: " HOSTNAME
-# bail out if blank
-[ -z $HOSTNAME ] && echo "Aborting because no hostname provided" && exit 1
+CURRENT_HOSTNAME="$(hostname --fqdn)"
+[ -z "${CURRENT_HOSTNAME}" ] && CURRENT_HOSTNAME="$(uname -n)"
+
+if [ ${CURRENT_HOSTNAME} == raspberrypi ];
+  read -p "Enter new Hostname: " HOSTNAME
+  # bail out if blank
+  [ -z $HOSTNAME ] && echo "Aborting because no hostname provided" && exit 1
+
+  rpi_change_hostname "${HOSTNAME}"
+fi
 
 read -p "Enter username to replace 'pi': " NEWUSER
 # bail out if blank
@@ -33,9 +40,11 @@ wget --output-document=rpi_functions.sh --quiet https://raw.githubusercontent.co
 ## Add new user and lock Pi User
 rpi_clone_user ${NEWUSER}
 rpi_updates
+rpi_install_essentials
 rpi_set_timezone "${TMZ}"
 rpi_set_keyboard "us"
-rpi_change_hostname "${HOSTNAME}"
+rpi_install_powerline_prompt
+rpi_install_login_notifications
 rpi_set_locale "${LOCALE}"
 
 echo "Reboot to complete inital setup."

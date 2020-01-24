@@ -27,7 +27,7 @@ function rpi_updates() {
   #echo "Perform firmware update..."
   #sudo rpi-update
   echo "Installing Updates..."
-  sudo apt-get update > /dev/null && sudo apt-get dist-upgrade -y > /dev/null
+  sudo apt-get --quiet --quiet update && sudo apt-get dist-upgrade --yes --quiet --quiet
 }
 
 
@@ -101,4 +101,51 @@ function rpi_set_autologin() {
 ExecStart=
 ExecStart=-/sbin/agetty --autologin $USER --noclear %I \$TERM
 EOF
+}
+
+function rpi_install_essentials() {
+  sudo apt-get --yes --quiet --quiet install screen unzip htop wget nano ntp curl
+}
+
+function rpi_install_powerline_prompt() {
+  echo "Installing Powerline Prompt..."
+  sudo apt-get --yes --quiet install fonts-powerline
+  mkdir -p ~/.config/fontconfig/
+  curl --location --silent --output ~/.config/fontconfig/conf.d https://raw.githubusercontent.com/powerline/fonts/master/fontconfig/50-enable-terminess-powerline.conf
+  fc-cache -vf
+
+  sudo apt-get install python3-pip
+  sudo pip3 install powerline-shell
+
+  mkdir -p ~/.config/powerline-shell
+  #powerline-shell --generate-config > ~/.config/powerline-shell/config.json
+
+  sudo curl --location --silent --output ~/.config/powerline-shell/config.json \
+    https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/powerlineshell/config.json
+
+  sudo curl --location --silent \
+    https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/powerlineshell/bashrc_insert.sh \
+    >> ~/.bashrc
+
+}
+
+function rpi_install_login_notifications() {
+  sudo curl --location --silent --output /etc/update-motd.d/15-logo \
+    https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/motd/15-logo \
+    && sudo chmod +x /etc/update-motd.d/15-logo
+
+  sudo curl --location --silent --output /etc/update-motd.d/20-status \
+    https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/motd/20-status \
+    && sudo chmod +x /etc/update-motd.d/20-status
+
+  sudo curl --location --silent --output /etc/update-motd.d/90-updates-available \
+    https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/motd/90-updates-available \
+    && sudo chmod +x /etc/update-motd.d/90-updates-available
+
+  sudo curl --location --silent --output /opt/update-notifier \
+    https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/update-notifier \
+    && sudo chmod +x /opt/update-notifier \
+    && sudo crontab -l | { cat; echo "# Update package every 12 hours"; echo "0 */12 * * * sudo /opt/update-notifier > /dev/null 2>&1"; } | sudo crontab -
+
+  sudo mv /etc/motd /etc/motd.old
 }
