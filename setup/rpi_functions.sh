@@ -107,27 +107,46 @@ function rpi_install_essentials() {
   sudo apt-get --yes --quiet --quiet install screen unzip htop wget nano ntp curl
 }
 
+function rpi_enhance_prompt() {
+  HOMEDIR=${1:-~}
+
+  echo "Updating Prompt..."
+
+  curl --location --silent \
+    https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/bashrc_insert_prompt.sh \
+    | sudo tee -a ${HOMEDIR}/.bashrc >/dev/null
+
+    if [ "${HOMEDIR}" = "~" ]; then
+      source ~/.bashrc
+    fi
+}
+
 function rpi_install_powerline_prompt() {
+  HOMEDIR=${1:-~}
+
   echo "Installing Powerline Prompt..."
+
   sudo apt-get --yes --quiet  --quiet install fonts-powerline
-  mkdir -p ~/.config/fontconfig/
-  curl --location --silent --output ~/.config/fontconfig/conf.d https://raw.githubusercontent.com/powerline/fonts/master/fontconfig/50-enable-terminess-powerline.conf
+  mkdir -p ${HOMEDIR}/.config/fontconfig/
+  sudo curl --location --silent --output ${HOMEDIR}/.config/fontconfig/conf.d https://raw.githubusercontent.com/powerline/fonts/master/fontconfig/50-enable-terminess-powerline.conf
   fc-cache -vf > /dev/null
 
   sudo apt-get --yes --quiet --quiet install python3-pip
   sudo pip3 install powerline-shell
 
-  mkdir -p ~/.config/powerline-shell
+  mkdir -p ${HOMEDIR}/.config/powerline-shell
   #powerline-shell --generate-config > ~/.config/powerline-shell/config.json
 
-  sudo curl --location --silent --output ~/.config/powerline-shell/config.json \
+  sudo curl --location --silent --output ${HOMEDIR}/.config/powerline-shell/config.json \
     https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/powerlineshell/config.json
 
-  sudo curl --location --silent \
+  curl --location --silent \
     https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/powerlineshell/bashrc_insert.sh \
-    >> ~/.bashrc
+    | sudo tee -a ${HOMEDIR}/.bashrc >/dev/null 
 
-  source ~/.bashrc
+  if [ "${HOMEDIR}" = "~" ]; then
+    source ~/.bashrc
+  fi
 }
 
 function rpi_install_login_notifications() {

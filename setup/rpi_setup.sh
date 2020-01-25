@@ -8,6 +8,8 @@
 TMZ="America/Vancouver"
 LOCALE="en_US.UTF-8"
 
+USE_POWERLINE="YES"
+
 #Check if script is being run as root
 if [ "$(id -u)" != "0" ]; then
    echo "This script must be run as root" 1>&2
@@ -43,7 +45,11 @@ rpi_updates
 rpi_install_essentials
 rpi_set_timezone "${TMZ}"
 rpi_set_keyboard "us"
-rpi_install_powerline_prompt
+if [ "$USE_POWERLINE" = "YES" ]; then
+  rpi_install_powerline_prompt "/home/$NEWUSER"
+else
+  rpi_enhance_prompt "/home/$NEWUSER"
+fi
 rpi_install_login_notifications
 rpi_set_locale "${LOCALE}"
 
