@@ -78,6 +78,12 @@ GetSystemInformation() {
     temp_heatmap=${cyan_text}
   fi
 
+  # Number of processes
+  processes=$(ps ax | wc -l | tr -d " ")
+
+  # Disk space
+  disk_space="`df -Pk | grep -E '^/dev/root' | awk '{ print $4 }'`k (`df -Pk | grep -E '^/dev/root' | awk '{ print $5 }'` used) on /dev/root"
+
   # Memory use, heatmap and bar
   memory_percent=$(awk '/MemTotal:/{total=$2} /MemFree:/{free=$2} /Buffers:/{buffers=$2} /^Cached:/{cached=$2} END {printf "%.1f", (total-free-buffers-cached)*100/total}' '/proc/meminfo')
   memory_heatmap=$(HeatmapGenerator "${memory_percent}")
@@ -97,6 +103,9 @@ PrintSystemInformation() {
 
   # CPU temp, load, percentage
   printf " %-10s${temp_heatmap}%-10s${reset_text} %-10s${cpu_load_1_heatmap}%-4s${reset_text}, ${cpu_load_5_heatmap}%-4s${reset_text}, ${cpu_load_15_heatmap}%-7s${reset_text} %-10s %-6s\\n" "CPU Temp:" "${temperature}" "CPU Load:" "${cpu_load[0]}" "${cpu_load[1]}" "${cpu_load[2]}" "CPU Load:" "${cpu_percent}%"
+
+  # Running processes and Disk space
+  printf " %-10s %-8s %-12s%-20s\\n" "Processes:" "${processes}" "Disk Space:" "${disk_space}"
 
   # Network
   echo "${bold_text}NETWORK ========================================================================${reset_text}"
