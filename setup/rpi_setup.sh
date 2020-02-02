@@ -25,12 +25,13 @@ sudo passwd pi
 CURRENT_HOSTNAME="$(hostname --fqdn)"
 [ -z "${CURRENT_HOSTNAME}" ] && CURRENT_HOSTNAME="$(uname -n)"
 
-if [ ${CURRENT_HOSTNAME} == raspberrypi ];
+if [ ${CURRENT_HOSTNAME} == raspberrypi ]; then
   read -p "Enter new Hostname: " HOSTNAME
   # bail out if blank
   [ -z $HOSTNAME ] && echo "Aborting because no hostname provided" && exit 1
 
-  rpi_change_hostname "${HOSTNAME}"
+else
+  HOSTNAME="${CURRENT_HOSTNAME}"
 fi
 
 read -p "Enter username to replace 'pi': " NEWUSER
@@ -40,6 +41,7 @@ read -p "Enter username to replace 'pi': " NEWUSER
 wget --output-document=rpi_functions.sh --quiet https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/setup/rpi_functions.sh && source rpi_functions.sh
 
 ## Add new user and lock Pi User
+rpi_change_hostname "${HOSTNAME}"
 rpi_clone_user ${NEWUSER}
 rpi_updates
 rpi_install_essentials
