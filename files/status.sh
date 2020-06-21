@@ -82,7 +82,11 @@ GetSystemInformation() {
   processes=$(ps ax | wc -l | tr -d " ")
 
   # Disk space
-  disk_space="`df -Pk | grep -E '^/dev/root' | awk '{ print $4 }'`k (`df -Pk | grep -E '^/dev/root' | awk '{ print $5 }'` used) on /dev/root"
+  if df -Pk | grep -E '^/dev/root' > /dev/null; then
+    disk_space="`df -PkH | grep -E '^/dev/root' | awk '{ print $4 }'` (`df -Pk | grep -E '^/dev/root' | awk '{ print $5 }'` used) on /dev/root"
+  else
+    disk_space="`df -PkH | grep -E '^/dev/mmcblk0p2' | awk '{ print $4 }'` (`df -Pk | grep -E '^/dev/mmcblk0p2' | awk '{ print $5 }'` used) on /dev/mmcblk0p2"
+  fi
 
   # Memory use, heatmap and bar
   memory_percent=$(awk '/MemTotal:/{total=$2} /MemFree:/{free=$2} /Buffers:/{buffers=$2} /^Cached:/{cached=$2} END {printf "%.1f", (total-free-buffers-cached)*100/total}' '/proc/meminfo')

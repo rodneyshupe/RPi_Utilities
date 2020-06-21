@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Reference: https://sbs.seandaniel.com/2019/06/updating-message-of-day-motd-on.html
 #

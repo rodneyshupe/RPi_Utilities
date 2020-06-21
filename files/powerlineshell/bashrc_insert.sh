@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 function _update_ps1() {
     PS1=$(powerline-shell $?)
 }

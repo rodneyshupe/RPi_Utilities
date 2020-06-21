@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Install Script to setup Raspberry Pi
 # Runs updates, fixes the Locale
@@ -41,7 +41,6 @@ read -p "Enter username to replace 'pi': " NEWUSER
 wget --output-document=rpi_functions.sh --quiet https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/setup/rpi_functions.sh && source rpi_functions.sh
 
 ## Add new user and lock Pi User
-rpi_change_hostname "${HOSTNAME}"
 rpi_clone_user ${NEWUSER}
 rpi_updates
 rpi_install_essentials
@@ -54,5 +53,9 @@ else
 fi
 rpi_install_login_notifications
 rpi_set_locale "${LOCALE}"
+
+rpi_set_ownership $NEWUSER
+
+rpi_change_hostname "${HOSTNAME}"
 
 echo "Reboot to complete inital setup."

@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 # tynick.com
 # tested on Mac OS 10.13
 

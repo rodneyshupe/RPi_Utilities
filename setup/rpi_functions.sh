@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function rpi_clone_user() {
   local NEWUSER=$1
@@ -10,7 +10,7 @@ function rpi_clone_user() {
     ## Add new user and lock Pi User
     echo "Adding user $NEWUSER..."
     echo "  Please enter the following information:"
-    sudo adduser ${NEWUSER}
+    sudo adduser --gecos "" ${NEWUSER}
     for GROUP in $(groups ${CLONEUSER} | sed -e "s/^${CLONEUSER} : ${CLONEUSER} //"); do sudo adduser ${NEWUSER} ${GROUP} > /dev/null ; done
     if [ -f /etc/sudoers.d/010_${CLONEUSER}-nopasswd ]; then
       sudo cp /etc/sudoers.d/010_${CLONEUSER}-nopasswd /etc/sudoers.d/010_${NEWUSER}-nopasswd > /dev/null
@@ -19,6 +19,10 @@ function rpi_clone_user() {
       sudo chmod u-w /etc/sudoers.d/010_${NEWUSER}-nopasswd > /dev/null
       #sudo cat /etc/sudoers.d/010_${NEWUSER}-nopasswd
     fi
+    sudo mkdir -p /home/$NEWUSER/.ssh/
+    sudo mkdir -p /home/$NEWUSER/.config/
+    sudo chown $NEWUSER:$NEWUSER /home/$NEWUSER/.ssh/
+    sudo chown $NEWUSER:$NEWUSER /home/$NEWUSER/.config/
   fi
 }
 
@@ -30,6 +34,16 @@ function rpi_updates() {
   sudo apt-get --quiet --quiet update && sudo apt-get dist-upgrade --yes --quiet --quiet
 }
 
+function rpi_set_ownership() {
+  local NEWUSER=$1
+  local CLONEUSER=${2:-pi}
+
+  if [[ ! "$NEWUSER" ]]; then
+    echo "ERROR: rpi_clone_user: New username missing."
+  else
+    sudo chown -R $NEWUSER:$NEWUSER /home/$NEWUSER/.config/
+  fi
+}
 
 function rpi_set_timezone() {
   local TIMEZONE="${1:-America/Vancouver}"
@@ -135,6 +149,7 @@ function rpi_install_powerline_prompt() {
   sudo pip3 install powerline-shell
 
   mkdir -p ${HOMEDIR}/.config/powerline-shell
+
   #powerline-shell --generate-config > ~/.config/powerline-shell/config.json
 
   sudo curl --location --silent --output ${HOMEDIR}/.config/powerline-shell/config.json \
@@ -142,7 +157,7 @@ function rpi_install_powerline_prompt() {
 
   curl --location --silent \
     https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/powerlineshell/bashrc_insert.sh \
-    | sudo tee -a ${HOMEDIR}/.bashrc >/dev/null 
+    | sudo tee -a ${HOMEDIR}/.bashrc >/dev/null
 
   if [ "${HOMEDIR}" = "~" ]; then
     source ~/.bashrc
