@@ -2,7 +2,8 @@
 
 function rpi_clone_user() {
     local NEWUSER=$1
-    local CLONEUSER=${2:-pi}
+    local CLONEUSER=${2:-$(getent passwd 1000 | cut -d: -f1)}
+    [ -z $CLONEUSER ] && CLONEUSER='pi'
 
     if [[ ! "$NEWUSER" ]]; then
         echo "ERROR: rpi_clone_user: New username missing."
@@ -38,7 +39,8 @@ function rpi_updates() {
 
 function rpi_set_ownership() {
     local NEWUSER=$1
-    local CLONEUSER=${2:-pi}
+    local CLONEUSER=${2:-$(getent passwd 1000 | cut -d: -f1)}
+    [ -z $CLONEUSER ] && CLONEUSER='pi'
 
     if [[ ! "$NEWUSER" ]]; then
         echo "ERROR: rpi_clone_user: New username missing."
@@ -107,7 +109,8 @@ function rpi_set_locale() {
 }
 
 function rpi_set_autologin() {
-    local USER="${1:-pi}"
+    local USER="${1:-$(getent passwd 1000 | cut -d: -f1)}"
+    [ -z $USER ] && USER='pi'
 
     echo "Setting auto login for user ${USER}..."
     systemctl set-default multi-user.target
@@ -124,7 +127,7 @@ function rpi_install_essentials() {
 }
 
 function rpi_enhance_prompt() {
-    HOMEDIR=${1:-~}
+    HOMEDIR=${1:-$HOME}
 
     echo "Updating Prompt..."
 
@@ -133,12 +136,12 @@ function rpi_enhance_prompt() {
         | sudo tee -a ${HOMEDIR}/.bashrc >/dev/null
 
         if [ "${HOMEDIR}" = "~" ]; then
-            source ~/.bashrc
+            source $HOME/.bashrc
         fi
 }
 
 function rpi_install_powerline_prompt() {
-    HOMEDIR=${1:-~}
+    HOMEDIR=${1:-$HOME}
 
     echo "Installing Powerline Prompt..."
 
@@ -152,7 +155,7 @@ function rpi_install_powerline_prompt() {
 
     mkdir -p ${HOMEDIR}/.config/powerline-shell
 
-    #powerline-shell --generate-config > ~/.config/powerline-shell/config.json
+    #powerline-shell --generate-config > $HOME/.config/powerline-shell/config.json
 
     sudo curl --location --silent --output ${HOMEDIR}/.config/powerline-shell/config.json \
         https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/powerlineshell/config.json
@@ -161,8 +164,8 @@ function rpi_install_powerline_prompt() {
         https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/files/powerlineshell/bashrc_insert.sh \
         | sudo tee -a ${HOMEDIR}/.bashrc >/dev/null
 
-    if [ "${HOMEDIR}" = "~" ]; then
-        source ~/.bashrc
+    if [ "${HOMEDIR}" = "$HOME" ]; then
+        source $HOME/.bashrc
     fi
 }
 

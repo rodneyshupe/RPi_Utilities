@@ -17,10 +17,13 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Configure Pi
-cd ~
+cd "$HOME"
 
-echo "Change pi default password..."
-sudo passwd pi
+OS_DEFAULT_USER="$(getent passwd 1000 | cut -d: -f1)"
+[ -z $OS_DEFAULT_USER ] && OS_DEFAULT_USER=pi
+
+echo "Change $OS_DEFAULT_USER default password..."
+sudo passwd "$OS_DEFAULT_USER"
 
 CURRENT_HOSTNAME="$(hostname --fqdn)"
 [ -z "${CURRENT_HOSTNAME}" ] && CURRENT_HOSTNAME="$(uname -n)"
@@ -33,13 +36,13 @@ else
     HOSTNAME="${CURRENT_HOSTNAME}"
 fi
 
-read -p "Enter username to replace 'pi': " NEWUSER
+read -p "Enter username to replace '$OS_DEFAULT_USER': " NEWUSER
 # bail out if blank
 [ -z $NEWUSER ] && echo "Aborting because no name provided" && exit 1
 
 wget --output-document=rpi_functions.sh --quiet https://raw.githubusercontent.com/rodneyshupe/RPi_Utilities/master/setup/rpi_functions.sh && source rpi_functions.sh
 
-## Add new user and lock Pi User
+## Add new user and lock $OS_DEFAULT_USER User
 rpi_clone_user ${NEWUSER}
 rpi_updates
 rpi_install_essentials
