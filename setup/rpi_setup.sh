@@ -26,12 +26,11 @@ CURRENT_HOSTNAME="$(hostname --fqdn)"
 [ -z "${CURRENT_HOSTNAME}" ] && CURRENT_HOSTNAME="$(uname -n)"
 
 if [ ${CURRENT_HOSTNAME} == raspberrypi ]; then
-  read -p "Enter new Hostname: " HOSTNAME
-  # bail out if blank
-  [ -z $HOSTNAME ] && echo "Aborting because no hostname provided" && exit 1
-
+    read -p "Enter new Hostname: " HOSTNAME
+    # bail out if blank
+    [ -z $HOSTNAME ] && echo "Aborting because no hostname provided" && exit 1
 else
-  HOSTNAME="${CURRENT_HOSTNAME}"
+    HOSTNAME="${CURRENT_HOSTNAME}"
 fi
 
 read -p "Enter username to replace 'pi': " NEWUSER
@@ -47,9 +46,9 @@ rpi_install_essentials
 rpi_set_timezone "${TMZ}"
 rpi_set_keyboard "us"
 if [ "$USE_POWERLINE" = "YES" ]; then
-  rpi_install_powerline_prompt "/home/$NEWUSER"
+    rpi_install_powerline_prompt "/home/$NEWUSER"
 else
-  rpi_enhance_prompt "/home/$NEWUSER"
+    rpi_enhance_prompt "/home/$NEWUSER"
 fi
 rpi_install_login_notifications
 rpi_set_locale "${LOCALE}"

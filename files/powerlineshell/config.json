@@ -1,25 +1,25 @@
 {
-"segments": [
-  "time",
-  "virtual_env",
-  "username",
-  "hostname",
-  "ssh",
-  "cwd",
-  "git",
-  "hg",
-  "jobs",
-  "root",
-  "exit_code"
-],
-"time": {
-  "format": "%I:%M %p"
-},
-"cwd": {
-  "max_depth": 4
-},
-"hostname": {
-  "colorize": false
-},
-"mode": "patched"
+    "segments": [
+        "time",
+        "virtual_env",
+        "username",
+        "hostname",
+        "ssh",
+        "cwd",
+        "git",
+        "hg",
+        "jobs",
+        "root",
+        "exit_code"
+    ],
+    "time": {
+        "format": "%I:%M %p"
+    },
+    "cwd": {
+        "max_depth": 4
+    },
+    "hostname": {
+        "colorize": false
+    },
+    "mode": "patched"
 }

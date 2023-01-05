@@ -5,8 +5,8 @@
 
 export TERM=xterm-256color
 
-if ( ls /usr/local/bin/status >> /dev/null 2>&1 ); then
-  echo
-  /usr/local/bin/status
-  echo
+if [ -f /usr/local/bin/status ]; then
+    echo
+    /usr/local/bin/status
+    echo
 fi
