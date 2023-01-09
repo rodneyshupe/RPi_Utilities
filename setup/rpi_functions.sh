@@ -58,9 +58,9 @@ function rpi_set_timezone() {
 
     echo "Setting time zone to ${TIMEZONE}..."
     # Set timezone to America/New_York
-    rm /etc/localtime
+    sudo rm /etc/localtime
     #sudo cp /etc/timezone /etc/timezone.dist
-    echo "${TIMEZONE}" > /etc/timezone
+    echo "${TIMEZONE}" | sudo tee /etc/timezone
     sudo dpkg-reconfigure -f noninteractive tzdata  > /dev/null
 }
 
@@ -103,9 +103,9 @@ function rpi_set_locale() {
 
     echo "Changing locale to ${LOCALE}..."
     local ENCODING="$(echo $LOCALE_LINE | cut -f2 -d " ")"
-    echo "$LOCALE $ENCODING" > /etc/locale.gen
-    sed -i "s/^\s*LANG=\S*/LANG=$LOCALE/" /etc/default/locale
-    dpkg-reconfigure -f noninteractive locales
+    echo "$LOCALE $ENCODING" | sudo tee /etc/locale.gen
+    sudo sed -i "s/^\s*LANG=\S*/LANG=$LOCALE/" /etc/default/locale
+    sudo dpkg-reconfigure -f noninteractive locales
 }
 
 function rpi_set_autologin() {
