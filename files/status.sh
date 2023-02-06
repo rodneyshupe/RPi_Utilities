@@ -93,8 +93,9 @@ GetSystemInformation() {
     memory_heatmap=$(HeatmapGenerator "${memory_percent}")
 
     # Get pi IP address, hostname and gateway
-    pi_ip_address=$(ip addr | grep 'eth0:.*state UP' -A2 | grep 'inet ' | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
-    pi_ip6_address=$(ip addr | grep 'eth0:.*state UP' -A4 | grep 'inet6 '| tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+    #pi_ip_address=$(ip addr | grep 'eth0:.*state UP' -A2 | grep 'inet ' | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+    pi_ip_address=$(ip r | egrep '^default via' | awk '{print $9}')
+    pi_ip6_address=$(ip addr | grep "$(ip --oneline link show up | grep -v "lo" | awk '{print $2}' | cut -d':' -f1 | cut -d'@' -f1 | head -1):.*state UP" -A4 | grep 'inet6 '| tail -n1 | awk '{print $2}' | cut -f1  -d'/')
     pi_hostname=$(hostname)
     pi_gateway=$(ip r | grep 'default' | awk '{print $3}')
 }
