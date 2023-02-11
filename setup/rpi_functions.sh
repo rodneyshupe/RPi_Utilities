@@ -151,6 +151,7 @@ function rpi_install_powerline_prompt() {
     fc-cache -vf > /dev/null
 
     sudo apt-get --yes --quiet --quiet install python3-pip
+    python3 -m pip install pip --upgrade
     sudo pip3 install powerline-shell
 
     mkdir -p ${HOMEDIR}/.config/powerline-shell
